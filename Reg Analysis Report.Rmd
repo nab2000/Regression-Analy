@@ -1,0 +1,28 @@
+---
+title: "Reg_Analysis"
+author: "NDR"
+date: "September 9, 2015"
+output: pdf_document
+---
+Executive Summary: 
+
+
+
+```{r}
+data("mtcars")
+df <- data.frame(mpg = mtcars$mpg, trans = mtcars$am)
+df$trans <- factor(df$trans, labels = c("Automatic", "Manual"))
+
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(df$trans, df$mpg, ylab = "mpg")
+```
+
+```{r, echo = F}
+p <- ggplot(df, aes(x = mpg, fill = trans))
+p + geom_bar(binwidth = 2)
+```
+
