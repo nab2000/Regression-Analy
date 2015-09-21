@@ -9,13 +9,15 @@ Executive Summary:
 
 
 ```{r}
+library(GGally)
 data("mtcars")
+ggpairs()
 df <- data.frame(mpg = mtcars$mpg, trans = mtcars$am)
 df$trans <- factor(df$trans, labels = c("Automatic", "Manual"))
 
 ```
 
-You can also embed plots, for example:
+Look at pairs plots to see what effects mpg, then build a linear model that includes these and transmission, then look at coefficient of transmission and compare this to single variable model
 
 ```{r, echo=FALSE}
 plot(df$trans, df$mpg, ylab = "mpg")
