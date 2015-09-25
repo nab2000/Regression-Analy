@@ -1,5 +1,5 @@
 ---
-title: "Reg_Analysis"
+title: "Reg Analysis Course Project"
 author: "NDR"
 date: "September 9, 2015"
 output: pdf_document
@@ -7,24 +7,54 @@ output: pdf_document
 Executive Summary: 
 
 
-
+##Analysis
+To start the analysis, first the data and our necessary libraries were loaded in:
 ```{r}
 library(GGally)
+library(ggplot2)
 data("mtcars")
-ggpairs()
-df <- data.frame(mpg = mtcars$mpg, trans = mtcars$am)
-df$trans <- factor(df$trans, labels = c("Automatic", "Manual"))
+```
+To examine what variables might have an impact on mpg, a pairs plot was constructed (Appendix Figure 1). Based on a review of this pairs plot, there appears to be a relationship between mpg and all the other variables, except the number of forward gears and the number of carburetors. 
 
+To evaluate if there is a significant relationship between transmission type and mpg a simple linear model was generated 
+```{r}
+fit1 <- lm(mpg~factor(am), data = mtcars)
+summary(fit1)$coef
+```
+From the summary of the linear fit, it appears that a manual transmission gives you 7.25 more mpg than an automatic transmission and that the realtionship is significant well below 95% confidence. However, because the pairs plot suggested relationships between mpg and other variables, a residual plot, along with other diagnostic plots, were examined (Appendix Figure 2). The residual plot doesn't show any noticable trend, but there does seem to be wide some variation in the residuals that might be explaiend by other variables. 
+To figure out what other variables are really important a number of linear models were constructed  by adding in additional variables based on a review of the pairs plot (Figure 1). 
+```{r}
+fit2 <- lm(mpg~factor(am), + wt, data = mtcars)
+fit3 <- lm(mpg~factor(am), + wt + hp, data = mtcars)
+fit4 <- lm(mpg~factor(am), + wt + hp + factor(cyl), data = mtcars)
+fit5 <- lm(mpg~factor(am), + wt + hp + factor(cyl) + drat, data = mtcars)
+fit6 <- lm(mpg~factor(am), + wt + hp + factor(cyl) + drat + factor(vs), data = mtcars)
+fit7 <- lm(mpg~factor(am), + wt + hp + factor(cyl) + drat + factor(vs) + qsec, data = mtcars)
+fit8 <- lm(mpg~factor(am), + wt + hp + factor(cyl) + drat + factor(vs) + qsec + disp, data = mtcars)
+summary(fit2)$coef
+```
+When weight is added into the linear model, the significance of transmission type disseapears as can be seen from the summary of fit2 coefficients. When we add additional vraibles weight continues to be the only variable whose coefficient is significant (except in model 3 where hp is also significant)
+
+To evaluate these models, we used analysis of variance.
+```{r}
+anova(fit1, fit2, fit3, fit4, fit5, fit6, fit7, fit8)
+```
+The analysis of the different models shows that model 2 (transmission and weight) and 3 (transmission, weight, and hp) are significantly different from model 1. This suggests that weight and horsepower are important variables impacting mpg. To evaluate if weight is even important, a similar analysis was done with 3 new models, adding in transmission type as the last variable. 
+```{r}
+fit21 <- lm(mpg~wt, data = mtcars)
+fit22 <- lm(mpg~wt + hp, data = mtcars)
+fit23 <- lm(mpg~wt + hp + am, data = mtcars)
+anova(fit21, fit22, fit23)
+```
+This analysis shows that the model with horsepower and weight is significantly different from the model with just weight. However the model with transmission type is not significantly different from the model of just weight and horsepower. Thus the only two variables that appear to have an effect on mpg for cars is weight and horsepower. The answer to our question is that neither autmatic nor manual transmission is better in regards to mpg after accounting for the weight and horsepower of the car. Thus, there is no difference between autmatic and manual transmission cars.
+
+# Appendix
+## Figure 1 Pairs plot of mtcars
+```{r}
+pairs(mtcars)
 ```
 
-Look at pairs plots to see what effects mpg, then build a linear model that includes these and transmission, then look at coefficient of transmission and compare this to single variable model
-
-```{r, echo=FALSE}
-plot(df$trans, df$mpg, ylab = "mpg")
+## Figure 2 Residual Plot of Simple Linear Model
+```{r}
+plot(fit1)
 ```
-
-```{r, echo = F}
-p <- ggplot(df, aes(x = mpg, fill = trans))
-p + geom_bar(binwidth = 2)
-```
-
