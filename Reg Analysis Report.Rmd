@@ -1,5 +1,5 @@
 ---
-title: "Reg Analysis Course Project"
+title: "Regression Analysis Course Project"
 author: "NDR"
 date: "September 9, 2015"
 output: pdf_document
@@ -22,7 +22,7 @@ summary(fit1)$coef
 From the summary of the linear fit, it appears that a manual transmission gives you 7.25 more mpg than an automatic transmission and that the realtionship is significant well below 95% confidence. However, because the pairs plot suggested relationships between mpg and other variables, a residual plot, along with other diagnostic plots, were examined (Appendix Figure 2). The residual plot doesn't show any noticable trend, but there does seem to be wide variation in the residuals that might be explaiend by other variables. 
 
 To figure out what other variables are really important a number of linear models were constructed  by adding in additional variables based on a review of the pairs plot (Figure 1). 
-```{r}
+```{r, echo = FALSE}
 fit2 <- lm(mpg~factor(am) + wt, data = mtcars)
 fit3 <- lm(mpg~factor(am) + wt + hp, data = mtcars)
 fit4 <- lm(mpg~factor(am) + wt + hp + factor(cyl), data = mtcars)
@@ -39,7 +39,7 @@ To evaluate these models, we used analysis of variance.
 anova(fit1, fit2, fit3, fit4, fit5, fit6, fit7, fit8)
 ```
 The analysis of the different models shows that model 2 (transmission and weight) and 3 (transmission, weight, and hp) are significantly different from model 1. This suggests that weight and horsepower are important variables impacting mpg. To evaluate if weight is even important, a similar analysis was done with 3 new models. 
-```{r}
+```{r, echo = FALSE}
 fit21 <- lm(mpg~wt, data = mtcars)
 fit22 <- lm(mpg~wt + hp, data = mtcars)
 fit23 <- lm(mpg~wt + hp + am, data = mtcars)
@@ -47,13 +47,16 @@ anova(fit21, fit22, fit23)
 ```
 This analysis shows that the model with horsepower and weight is significantly different from the model with just weight. However the model with transmission type is not significantly different from the model of just weight and horsepower. Thus the only two variables that appear to have an effect on mpg for cars is weight and horsepower. The answer to our question of which type of transmission is better for mpg is that neither autmatic nor manual transmission is better in regards to mpg after accounting for the weight and horsepower of the car. Thus, there is no difference between automatic and manual transmission cars.
 
+***
 # Appendix
 ## Figure 1 Pairs plot of mtcars
-```{r}
+```{r, echo = FALSE}
 pairs(mtcars)
 ```
 
+***
 ## Figure 2 Residual Plot of Simple Linear Model
-```{r}
+```{r, echo=FALSE}
+par(mfrow = c(2,2))
 plot(fit1)
 ```
